@@ -1,18 +1,23 @@
+'use client'
 import { useForm } from "react-hook-form";
 import type { ITask } from "@/interfaces/ITask";
 import "../styles/formAdd.css";
-import { doc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/firebase";
 import { Switch,FormControlLabel } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useAppContext } from "@/context/loading";
+import Button from '@mui/material/Button';
+import { useRouter } from "next/navigation";
 
 export default function FormTodo({task}: {task?:ITask}) {
   const [status, setStatus] = useState<boolean>(false)
+  const { setLoading } = useAppContext()
+  const router = useRouter()
 
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors }
   } = useForm({
     defaultValues: task?.id ? {
@@ -31,17 +36,21 @@ export default function FormTodo({task}: {task?:ITask}) {
   }, [task])
 
   const loadData = async(data: ITask):Promise<void> => {
-    if(task?.id) {
-      await updateDoc(doc(db, 'tasks', task.id), {
-        description: data.description,
-        title: data.title,
-        status
-      })
-    }else {
-
+    setLoading(true)
+    try{
+      if(task?.id) {
+        await updateDoc(doc(db, 'tasks', task.id), {
+          description: data.description,
+          title: data.title,
+          status
+        })
+        router.push('/')
+      }else {
+      }
+    }finally{
+      setLoading(false)
     }
   }
-
 
   return (
     <form
@@ -60,19 +69,25 @@ export default function FormTodo({task}: {task?:ITask}) {
       <div className="">
         {
           task?.id &&
-          <FormControlLabel 
-            control={
-              <Switch
-                checked={status}
-                onChange={() => setStatus(!status)}
-                inputProps={{ 'aria-label': 'controlled' }}
-              />
-            }
-            label="Estado"
-          />
+          <div className="container-status">
+            <FormControlLabel 
+              labelPlacement="top"
+              control={
+                <Switch
+                  checked={status}
+                  onChange={() => setStatus(!status)}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                />
+              }
+              label="Estado"
+            />
+            <div>{!status ? 'Pendiente' : 'Completado'}</div>
+          </div>
         }
       </div>
-      <input type="submit" />
+      <Button variant="contained" type="submit">
+        Enviar
+      </Button>
     </form>
   );
 }

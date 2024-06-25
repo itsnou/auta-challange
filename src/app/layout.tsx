@@ -4,6 +4,7 @@ import "./globals.css";
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../theme';
+import Provider from "@/context/loading";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,13 +18,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="en">
       <body>
         <AppRouterCacheProvider
           options={{ key: 'css' }}
         >
           <ThemeProvider theme={theme}>
-            {children}
+            <Provider>
+              {children}
+            </Provider>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>

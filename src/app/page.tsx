@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [tasks, setTasks] = useState<ITask[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
 
   useEffect(() => {
@@ -20,15 +21,19 @@ export default function Home() {
         querySnapshot.forEach((task:any) => {
           todosArr.push({...task.data(), id:task.id})
         })
-        setTasks(todosArr.sort((a,b) => {
+      setTasks(todosArr.sort((a,b) => {
           if (a.status === b.status) return 0;
           return a.status ? 1 : -1;
         }))
+        setLoading(false)
       })
       return () => unsubcribe();
     }
     fetchData()
   }, [])
+  
+
+
 
   const goLink = (id: string) => {
     router.push(`/task/${id}`)
@@ -43,7 +48,7 @@ export default function Home() {
         <FormTodo />
       </div>
       <div>
-        <TableTask tasks={tasks} goRoute={goLink}/>
+        <TableTask tasks={tasks} goRoute={goLink} loading={loading} />
       </div>
     </main>
   );

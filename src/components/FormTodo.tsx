@@ -6,13 +6,13 @@ import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/firebase";
 import { Switch,FormControlLabel } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useAppContext } from "@/context/loading";
+import { useAppContext } from "@/context/controllerStates";
 import Button from '@mui/material/Button';
 import { useRouter } from "next/navigation";
 
 export default function FormTodo({task}: {task?:ITask}) {
   const [status, setStatus] = useState<boolean>(false)
-  const { setLoading } = useAppContext()
+  const { setLoading, setSnacker } = useAppContext()
   const router = useRouter()
 
   const {
@@ -45,16 +45,33 @@ export default function FormTodo({task}: {task?:ITask}) {
           status
         })
         router.push('/')
+        setSnacker({
+          color:'success',
+          message: 'Tarea editada con exito!',
+          open: true
+        })
       }else {
         await addDoc(collection(db, 'tasks'), {
           title: data.title,
           description: data.description,
           status: false
         })
+        setSnacker({
+          color:'success',
+          message: 'Tarea agregada con exito!',
+          open: true
+        })
       }
+    }catch(error) {
+      setSnacker({
+        color:'error',
+        message: 'Ups! Ocurrio un error inesperado, intenta nuevamente mas tarde',
+        open: true
+      })
     }finally{
       setLoading(false)
     }
+
   }
 
   return (
@@ -71,7 +88,7 @@ export default function FormTodo({task}: {task?:ITask}) {
         {...register("description", { required: true })}
       />
       {errors.description && <p>El campo descripción es obligatorio</p>}
-      <div className="">
+      <div>
         {
           task?.id &&
           <div className="container-status">

@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useAppContext } from "@/context/loading";
 import Button from '@mui/material/Button';
 import { useRouter } from "next/navigation";
+import { title } from "process";
 
 export default function FormTodo({task}: {task?:ITask}) {
   const [status, setStatus] = useState<boolean>(false)
@@ -46,6 +47,11 @@ export default function FormTodo({task}: {task?:ITask}) {
         })
         router.push('/')
       }else {
+        await addDoc(collection(db, 'tasks'), {
+          title: data.title,
+          description: data.description,
+          status: false
+        })
       }
     }finally{
       setLoading(false)

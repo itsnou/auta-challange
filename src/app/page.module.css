@@ -2,3 +2,28 @@
   height: 100dvh;
   padding: 20px;
 }
+
+.table{
+  max-width: 75%;
+  margin: auto;
+  margin-top: 40px;
+}
+
+.form{
+  text-align: center;
+  margin: 25px auto;
+}
+
+.title {
+  margin: 10px 0px 40px 0px;
+  font-size: xx-large;
+}
+
+.textCenter {
+  text-align: center;
+  margin: 0 auto;
+}
+
+.tableBody {
+  cursor: pointer;
+}

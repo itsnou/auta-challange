@@ -1,8 +1,14 @@
 import { useForm } from "react-hook-form";
 import type { ITask } from "@/interfaces/ITask";
 import "../styles/formAdd.css";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "@/firebase/firebase";
+import { Switch,FormControlLabel } from "@mui/material";
+import { useEffect, useState } from "react";
 
 export default function FormTodo({task}: {task?:ITask}) {
+  const [status, setStatus] = useState<boolean>(false)
+
   const {
     register,
     handleSubmit,
@@ -18,9 +24,21 @@ export default function FormTodo({task}: {task?:ITask}) {
     }
   });
 
-  const loadData = async(data: {}):Promise<void> => {
+  useEffect(() => {
+    if(task?.id){
+      setStatus(task?.status)
+    }
+  }, [task])
+
+  const loadData = async(data: ITask):Promise<void> => {
     if(task?.id) {
-      console.log('paso', task, data)
+      await updateDoc(doc(db, 'tasks', task.id), {
+        description: data.description,
+        title: data.title,
+        status
+      })
+    }else {
+
     }
   }
 
@@ -28,7 +46,7 @@ export default function FormTodo({task}: {task?:ITask}) {
   return (
     <form
       onSubmit={handleSubmit((data) => {
-        loadData(data);
+        loadData(data as ITask);
       })}
     >
       <label>Titulo</label>
@@ -39,6 +57,21 @@ export default function FormTodo({task}: {task?:ITask}) {
         {...register("description", { required: true })}
       />
       {errors.description && <p>El campo descripción es obligatorio</p>}
+      <div className="">
+        {
+          task?.id &&
+          <FormControlLabel 
+            control={
+              <Switch
+                checked={status}
+                onChange={() => setStatus(!status)}
+                inputProps={{ 'aria-label': 'controlled' }}
+              />
+            }
+            label="Estado"
+          />
+        }
+      </div>
       <input type="submit" />
     </form>
   );

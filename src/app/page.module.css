@@ -27,3 +27,14 @@
 .tableBody {
   cursor: pointer;
 }
+
+.btnDelete {
+  border-radius: 4px;
+  background-color: #f0300e;
+  border: none;
+  color: #fff;
+  text-align: center;
+  padding: 15px;
+  margin: 5px;
+  box-shadow: 0 10px 20px -8px rgba(0, 0, 0,.7);
+}

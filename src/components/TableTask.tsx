@@ -8,9 +8,26 @@ import Paper from '@mui/material/Paper';
 import styles from "../app/page.module.css";
 import type { ITask } from '@/interfaces/ITask';
 import { truncateText } from '@/utils/trunscateText';
+import { useAppContext } from "@/context/loading";
 import { CircularProgress, Tooltip } from '@mui/material';
+import { db } from '@/firebase/firebase';
+import { deleteDoc, doc } from 'firebase/firestore';
 
 export default function TableTask({ tasks, goRoute }: {tasks:ITask[], goRoute: Function}) {
+  const { setLoading } = useAppContext()
+
+  const deleteTask = async(e: Event,task: ITask) => {
+    e.preventDefault()
+    e.stopPropagation(); // Evitar la propagación del evento
+    setLoading(true)
+    try{
+      if(task.id){
+        await deleteDoc(doc(db, 'tasks', task.id?.toString()))
+      }
+    }finally{
+      setLoading(false)
+    }
+  }
 
   return (
     <div className={styles.table}>
@@ -24,6 +41,7 @@ export default function TableTask({ tasks, goRoute }: {tasks:ITask[], goRoute: F
                   <TableCell>Titulo de tarea</TableCell>
                   <TableCell>Descripción</TableCell>
                   <TableCell>Estado</TableCell>
+                  <TableCell>Acciones</TableCell>
                 </TableRow>
               </TableHead>
                 <TableBody>
@@ -47,6 +65,11 @@ export default function TableTask({ tasks, goRoute }: {tasks:ITask[], goRoute: F
                       </TableCell>
                       <TableCell>
                         {task.status ? 'Completado' : 'Pendiente'}
+                      </TableCell>
+                      <TableCell>
+                        <button className={styles.btnDelete} onClick={(e) => deleteTask(e, task)}>
+                          Borrar
+                        </button>
                       </TableCell>
                     </TableRow>
                   ))}

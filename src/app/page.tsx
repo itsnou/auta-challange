@@ -20,7 +20,10 @@ export default function Home() {
         querySnapshot.forEach((task:any) => {
           todosArr.push({...task.data(), id:task.id})
         })
-        setTasks(todosArr)
+        setTasks(todosArr.sort((a,b) => {
+          if (a.status === b.status) return 0;
+          return a.status ? 1 : -1;
+        }))
       })
       return () => unsubcribe();
     }

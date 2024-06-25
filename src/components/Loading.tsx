@@ -5,7 +5,7 @@ export default function Loading() {
   return (
     <div className={styles.container}>
       <div className={styles.spinner}>
-        <CircularProgress size={500} />
+        <CircularProgress size={300} />
       </div>
     </div>
   )

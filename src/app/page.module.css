@@ -38,3 +38,7 @@
   margin: 5px;
   box-shadow: 0 10px 20px -8px rgba(0, 0, 0,.7);
 }
+
+.btnBack{
+  margin:40px !important;
+}

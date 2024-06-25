@@ -6,10 +6,12 @@ import { db } from "@/firebase/firebase";
 import type { ITask } from "@/interfaces/ITask";
 import { useState, useEffect, Suspense } from "react";
 import FormTodo from "@/components/FormTodo";
-import { CircularProgress } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
+import Link from "next/link";
 
 export default function TaskById({ params }: { params: { id: string } }) {
   const [task, setTask] = useState<ITask>()
+  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     const fetchData = () => {
@@ -23,6 +25,7 @@ export default function TaskById({ params }: { params: { id: string } }) {
             status: taskById.status
           });
         }
+        setLoading(false)
       });
       return () => unsub()
     }
@@ -36,7 +39,14 @@ export default function TaskById({ params }: { params: { id: string } }) {
       </div>
       <div className={styles.form}>
         {
-          task ? <FormTodo task={task} /> : <CircularProgress />
+          loading ? <CircularProgress /> :
+          task ? <FormTodo task={task} /> : 
+          <div>
+            <h3>Ups! No hay nada por aca!</h3>
+            <Link href="/">
+              <Button variant="contained" className={styles.btnBack}>Volver atras</Button>
+            </Link>
+          </div>
         }
       </div>
     </section>

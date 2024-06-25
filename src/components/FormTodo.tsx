@@ -1,23 +1,27 @@
-"use client"
 import { useForm } from "react-hook-form";
-
+import type { ITask } from "@/interfaces/ITask";
 import "../styles/formAdd.css";
 
-export default function FormTodo() {
+export default function FormTodo({task}: {task?:ITask}) {
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors }
   } = useForm({
-    defaultValues: {
+    defaultValues: task?.id ? {
+      title: task.title,
+      description: task.description
+    } : {
       title: "",
       description: ""
     }
   });
 
-  function loadData(data: {}):void {
-    console.log(data)
+  const loadData = async(data: {}):Promise<void> => {
+    if(task?.id) {
+      console.log('paso', task, data)
+    }
   }
 
 
